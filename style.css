@@ -1546,12 +1546,21 @@ mark{background:#ffe082;border-radius:2px;padding:0 1px;}
 }
 
 /* ===== 안전성 DB 통합검색 ===== */
-.sdb-overview{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
-.sdb-ov-chip{
-  background:var(--paper-soft);border:1px solid var(--border);border-radius:8px;
-  padding:6px 12px;font-size:12px;color:var(--muted);
+.sdb-overview{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:20px;
 }
-.sdb-ov-chip b{color:var(--text);font-weight:700;margin-left:4px;}
+.sdb-ov-card{
+  background:#fff;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.sdb-ov-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sdb-ov-flag{font-size:18px;}
+.sdb-ov-cnt{
+  font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-light);
+  padding:2px 9px;border-radius:10px;
+}
+.sdb-ov-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.sdb-ov-sub{font-size:11px;color:var(--muted);}
 
 .sdb-search-btn{
   background:var(--green);color:#fff;border:none;border-radius:8px;
@@ -1633,7 +1642,6 @@ mark{background:#ffe082;border-radius:2px;padding:0 1px;}
 }
 .sdb-ext-row:last-child{border-bottom:none;}
 .sdb-ext-row:hover{background:var(--paper-soft);}
-.sdb-ext-row.active{background:var(--accent-light);}
 .sdb-ext-row-name{font-size:13px;font-weight:500;color:var(--text);flex:1;min-width:0;line-height:1.4;}
 .sdb-ext-row-link{font-size:12px;color:var(--accent);white-space:nowrap;flex-shrink:0;font-weight:500;}
 

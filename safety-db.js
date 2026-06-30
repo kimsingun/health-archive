@@ -1,15 +1,15 @@
 // 안전성 DB 통합검색 — 국내외 9개 내장 DB + 49개 외부 DB 링크
 (function () {
   var SRC = {
-    GRAS:    { l: 'FDA GRAS Notices',          f: '🇺🇸', i: 'G' },
-    SCOGS:   { l: 'FDA SCOGS',                 f: '🇺🇸', i: 'S' },
-    SAF:     { l: 'Substances Added to Food',  f: '🇺🇸', i: 'F' },
-    JPA:     { l: '일본 식품첨가물',             f: '🇯🇵', i: 'J' },
-    UNPA:    { l: 'UNPA Old Dietary',          f: '🇺🇸', i: 'U' },
-    CRN:     { l: 'CRN Vitamin & Mineral',     f: '🇺🇸', i: 'C' },
-    NIBIOHN: { l: 'NIBIOHN 소재정보',           f: '🇯🇵', i: 'N' },
-    NCCIH:   { l: 'NCCIH Herbs',               f: '🇺🇸', i: 'H' },
-    NIH_ODS: { l: 'NIH ODS',                   f: '🇺🇸', i: 'O' }
+    GRAS:    { l: 'FDA GRAS Notices',          kl: 'GRAS 신고 목록',           f: '🇺🇸', country: '미국', i: 'G' },
+    SCOGS:   { l: 'FDA SCOGS',                 kl: '안전성선택위원회',          f: '🇺🇸', country: '미국', i: 'S' },
+    SAF:     { l: 'Substances Added to Food',  kl: '식품첨가물질 인벤토리',      f: '🇺🇸', country: '미국', i: 'F' },
+    JPA:     { l: '일본 식품첨가물 리스트',       kl: '식품첨가물 리스트',         f: '🇯🇵', country: '일본', i: 'J' },
+    UNPA:    { l: 'UNPA Old Dietary',          kl: '기존 식이성분 목록',        f: '🇺🇸', country: '미국', i: 'U' },
+    CRN:     { l: 'CRN Vitamin & Mineral',     kl: '비타민·미네랄 안전성',      f: '🇺🇸', country: '미국', i: 'C' },
+    NIBIOHN: { l: 'NIBIOHN 소재정보',           kl: '소재정보 데이터베이스',      f: '🇯🇵', country: '일본', i: 'N' },
+    NCCIH:   { l: 'NCCIH Herbs',               kl: '허브·보조제 정보',          f: '🇺🇸', country: '미국', i: 'H' },
+    NIH_ODS: { l: 'NIH ODS',                   kl: '식이보조제 팩트시트',        f: '🇺🇸', country: '미국', i: 'O' }
   };
   var KEYS  = ['GRAS', 'SCOGS', 'SAF', 'JPA', 'UNPA', 'CRN', 'NIBIOHN', 'NCCIH', 'NIH_ODS'];
   var DKEYS = ['gras', 'scogs', 'saf', 'jpa', 'unpa', 'crn', 'nibiohn', 'nccih', 'nih_ods'];
@@ -112,7 +112,15 @@
     if (!el || typeof SAFETY_DB === 'undefined') return;
     var html = KEYS.map(function (k, i) {
       var n = (SAFETY_DB[DKEYS[i]] || []).length;
-      return '<span class="sdb-ov-chip">' + SRC[k].f + ' ' + SRC[k].l + ' <b>' + n + '</b></span>';
+      var m = SRC[k];
+      return '<div class="sdb-ov-card">'
+        + '<div class="sdb-ov-card-top">'
+        + '<span class="sdb-ov-flag">' + m.f + '</span>'
+        + '<span class="sdb-ov-cnt">' + n.toLocaleString() + '건</span>'
+        + '</div>'
+        + '<div class="sdb-ov-name">' + m.kl + '</div>'
+        + '<div class="sdb-ov-sub">' + m.l + ' · ' + m.country + '</div>'
+        + '</div>';
     }).join('');
     el.innerHTML = html;
   }
@@ -256,12 +264,10 @@
 
       sec.items.forEach(function (item) {
         var url = item.url;
-        var active = false;
         if (item.sk === 'query=' || item.sk === 'search=') {
           url = item.url + enc;
-          active = true;
         }
-        html += '<a class="sdb-ext-row' + (active ? ' active' : '') + '" href="' + url + '" target="_blank" rel="noopener">'
+        html += '<a class="sdb-ext-row" href="' + url + '" target="_blank" rel="noopener">'
           + '<span class="sdb-ext-row-name">' + escapeHtml(item.name) + '</span>'
           + '<span class="sdb-ext-row-link">바로가기 →</span>'
           + '</a>';
