@@ -616,7 +616,7 @@ function reportCellHtml(r) {
         seen.add(key);
         return true;
       })
-      .map(row => `<a class="report-link" href="reports/${encodeURIComponent(row.report)}" target="_blank" rel="noopener">${escapeHtml(row.noticeNo || 'PDF')}</a>`);
+      .map(row => `<a class="report-link" href="${escapeHtml(pdfHref('reports/' + row.report))}" target="_blank" rel="noopener">${escapeHtml(row.noticeNo || 'PDF')}</a>`);
 
     return links.length
       ? `<div class="report-link-list">${links.join('')}</div>`
@@ -624,7 +624,7 @@ function reportCellHtml(r) {
   }
 
   return r.report
-    ? `<a class="report-link" href="reports/${encodeURIComponent(r.report)}" target="_blank" rel="noopener">PDF 보기</a>`
+    ? `<a class="report-link" href="${escapeHtml(pdfHref('reports/' + r.report))}" target="_blank" rel="noopener">PDF 보기</a>`
     : '<span class="report-none">리포트 미발행</span>';
 }
 
@@ -659,7 +659,7 @@ function renderMinutes(list) {
       <td class="notice">${escapeHtml(r.year)}</td>
       <td class="name">${escapeHtml(r.meetingName)}</td>
       <td class="ing-cell">${tags || '-'}</td>
-      <td>${r.pdf ? `<a class="report-link" href="minutes-pdfs/${encodeURIComponent(r.pdf)}" target="_blank" rel="noopener">회의록 보기</a>` : '-'}</td>
+      <td>${r.pdf ? `<a class="report-link" href="${escapeHtml(pdfHref('minutes-pdfs/' + r.pdf))}" target="_blank" rel="noopener">회의록 보기</a>` : '-'}</td>
     </tr>
   `;
   }).join('');
@@ -955,6 +955,14 @@ function renderCompareTable() {
     : `${list.length}건`;
 }
 
+// GitHub Pages는 Git LFS 바이너리를 서빙하지 못하므로, relPath(로컬 상대경로)에
+// 매핑된 구글 드라이브 파일이 있으면 그 링크로, 없으면 기존 로컬 경로로 대체한다.
+function pdfHref(relPath) {
+  const ids = (typeof DRIVE_FILE_IDS !== 'undefined') ? DRIVE_FILE_IDS : {};
+  const id = ids[relPath];
+  return id ? `https://drive.google.com/file/d/${id}/view` : relPath;
+}
+
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
@@ -1027,7 +1035,7 @@ function setupLawTabs() {
 function renderGuidelineCards(gridId, countId, list, basePath, summaryFactory) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = list.map(g => `
-    <a class="law-link-card" href="${basePath}/${encodeURIComponent(g.file)}" target="_blank" rel="noopener">
+    <a class="law-link-card" href="${escapeHtml(pdfHref(basePath + '/' + g.file))}" target="_blank" rel="noopener">
       <h3>${escapeHtml(g.name)}</h3>
       <p>${escapeHtml(summaryFactory(g))}</p>
     </a>
@@ -1119,9 +1127,9 @@ function renderBiomarkerDetail(item) {
   const clinical = item.clinical || {};
   const preclinical = item.preclinical || {};
   const guideHref = item.guideFile
-    ? `laws/guidelines/${encodeURIComponent(item.guideFile)}`
+    ? pdfHref('laws/guidelines/' + item.guideFile)
     : '';
-  const generalHref = 'laws/general-guidelines/' + encodeURIComponent('인체적용시험 설계 가이드[개정판]_2024.05.pdf');
+  const generalHref = pdfHref('laws/general-guidelines/인체적용시험 설계 가이드[개정판]_2024.05.pdf');
 
   detail.innerHTML = `
     <div class="biomarker-detail-head">
