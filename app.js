@@ -231,7 +231,7 @@ const GLOBAL_SEARCH_GROUPS = [
   ['minutes', '회의록'],
   ['products', '신규 제품'],
   ['biomarkers', '기능성별 프로토콜'],
-  ['trials', '임상정보 DB'],
+  ['trials', '임상정보 데이터베이스'],
   ['news', '뉴스'],
   ['laws', '가이드라인/공전/법령'],
   ['foodraw', '식품원료목록'],
@@ -1295,7 +1295,7 @@ function setupNews() {
   });
 }
 
-// ---------- 임상정보 DB ----------
+// ---------- 임상정보 데이터베이스 ----------
 
 const TRIAL_SUPPLEMENT_TERMS = [
   'supplement', 'dietary', 'food', 'functional food', 'probiotic', 'prebiotic', 'synbiotic',

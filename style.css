@@ -1545,7 +1545,7 @@ mark{background:#ffe082;border-radius:2px;padding:0 1px;}
   .fb-row{max-width:88%;}
 }
 
-/* ===== 안전성 DB 통합검색 ===== */
+/* ===== 안전성 데이터베이스 통합검색 ===== */
 .sdb-overview{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:20px;
 }
