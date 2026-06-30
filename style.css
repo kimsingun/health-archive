@@ -1305,6 +1305,44 @@ mark{background:#ffe082;border-radius:2px;padding:0 1px;}
 .foodraw-pagination button.active{background:var(--green);color:#fff;border-color:var(--green);}
 .foodraw-pagination button:hover:not(.active){background:var(--green-light);}
 
+.intro-modal-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:100;
+  background:rgba(20,30,26,.46);
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.intro-modal-overlay.active{display:flex;}
+.intro-modal{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  background:var(--paper-solid);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:26px 24px 22px;
+  box-shadow:var(--shadow-lg);
+}
+.intro-modal-close{
+  position:absolute;top:12px;right:14px;
+  border:none;background:none;cursor:pointer;
+  font-size:20px;line-height:1;color:var(--muted);
+  padding:4px;
+}
+.intro-modal-close:hover{color:var(--text);}
+.intro-modal h3{margin:0 0 12px;color:var(--green);font-size:17px;font-weight:800;}
+.intro-modal-body{margin:0;color:var(--text);font-size:13.5px;line-height:1.65;}
+.intro-modal-body a{color:var(--green);font-weight:700;}
+.intro-modal-actions{display:flex;gap:8px;margin-top:20px;}
+.intro-modal-btn{
+  flex:1;border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;
+  cursor:pointer;border:1px solid var(--border);
+}
+.intro-modal-btn-ghost{background:#fff;color:var(--muted);}
+.intro-modal-btn-ghost:hover{background:var(--green-light);color:var(--green);}
+.intro-modal-btn-primary{background:var(--green);border-color:var(--green);color:#fff;}
+.intro-modal-btn-primary:hover{background:#245a47;}
+
 .site-footer{
   border-top:1px solid var(--border);padding:24px 0;color:var(--muted);
   font-size:13px;text-align:center;

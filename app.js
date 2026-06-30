@@ -77,6 +77,37 @@ function renderHeroNews() {
   `).join('');
 }
 
+// ---------- 첫 방문 안내 팝업 ----------
+
+function todayDateStr() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+}
+
+function setupIntroModal() {
+  const overlay = document.getElementById('intro-modal-overlay');
+  if (!overlay) return;
+  const closeBtn = document.getElementById('intro-modal-close');
+  const confirmBtn = document.getElementById('intro-modal-confirm');
+  const hideTodayBtn = document.getElementById('intro-modal-hide-today');
+  const STORAGE_KEY = 'ha-intro-hide-until';
+
+  function close() { overlay.classList.remove('active'); }
+
+  closeBtn.addEventListener('click', close);
+  confirmBtn.addEventListener('click', close);
+  hideTodayBtn.addEventListener('click', () => {
+    localStorage.setItem(STORAGE_KEY, todayDateStr());
+    close();
+  });
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  if (localStorage.getItem(STORAGE_KEY) !== todayDateStr()) {
+    overlay.classList.add('active');
+  }
+}
+
 // ---------- 방문자 카운터 (CounterAPI v1, 키 없이 사용 가능) ----------
 
 const VISITOR_COUNTER_NAMESPACE = 'healtharchive';
@@ -1702,6 +1733,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHeroNews();
   renderDailyQuote();
   setupVisitorCounter();
+  setupIntroModal();
   setupHeroSearch();
   loadData().then(() => {
     document.getElementById('ingredient-search').addEventListener('input', applyIngredientFilter);
