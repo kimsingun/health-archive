@@ -1,4 +1,4 @@
-// 안전성 DB 통합검색 — 국내외 9개 내장 DB + 49개 외부 DB 링크
+// 안전성 데이터베이스 통합검색 — 국내외 9개 내장 데이터베이스 + 49개 외부 데이터베이스 링크
 (function () {
   var SRC = {
     GRAS:    { l: 'FDA GRAS Notices',          kl: 'GRAS 신고 목록',           f: '🇺🇸', country: '미국', i: 'G' },
@@ -68,8 +68,8 @@
       { flag: '🇯🇵', org: '厚生労働省', name: 'Food Additives List (食品添加物リスト, 식품첨가물 리스트) — 일본', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/shokuhin/syokuten/index.html' },
       { flag: '🇦🇺', org: 'FSANZ', name: 'Schedule 15 — Permitted Food Additives (허용 식품첨가물) — 호주', url: 'https://www.legislation.gov.au/F2015L00439/latest/text' }
     ]},
-    { name: '안전성 DB', items: [
-      { flag: '🇺🇸', org: 'Therapeutic Research', name: 'Natural Medicines (식품·허브·보조제 안전성 DB) — 미국', url: 'https://naturalmedicines.therapeuticresearch.com/databases/food,-herbs-supplements.aspx' },
+    { name: '안전성 데이터베이스', items: [
+      { flag: '🇺🇸', org: 'Therapeutic Research', name: 'Natural Medicines (식품·허브·보조제 안전성 데이터베이스) — 미국', url: 'https://naturalmedicines.therapeuticresearch.com/databases/food,-herbs-supplements.aspx' },
       { flag: '🇺🇸', org: 'AHP', name: 'AHP Monographs (미국 허브약전 모노그래프) — 미국', url: 'https://herbal-ahp.org/' },
       { flag: '🇺🇸', org: 'AMR', name: 'AMR Archive (대체의학 리뷰 아카이브) — 미국', url: 'https://altmedrev.com/resources/' },
       { flag: '🇺🇸', org: 'CRN', name: 'CRN Vitamin and Mineral Safety (비타민·미네랄 안전성, 3판) — 미국', url: 'https://www.crnusa.org/sites/default/files/files/resources/CRN-SafetyBook-3rdEdition-2014-fullbook.pdf' },
@@ -245,7 +245,7 @@
     });
 
     if (!shown) {
-      html = '<div class="sdb-no-result">내장 DB에서 "' + escapeHtml(q) + '" 결과 없음</div>';
+      html = '<div class="sdb-no-result">내장 데이터베이스에서 "' + escapeHtml(q) + '" 결과 없음</div>';
     }
     document.getElementById('sdb-card-grid').innerHTML = html;
   }
@@ -295,7 +295,7 @@
       searchBtn.textContent = '검색';
       renderOverview();
     } else {
-      input.placeholder = 'DB 로딩 실패 — 페이지를 새로고침하세요';
+      input.placeholder = '데이터베이스 로딩 실패 — 페이지를 새로고침하세요';
     }
 
     searchBtn.addEventListener('click', doSearch);
