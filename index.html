@@ -16,28 +16,33 @@
     <nav class="main-nav">
       <a href="#home" data-tab="home" class="nav-link active">홈</a>
       <div class="nav-group">
-        <span class="nav-group-label">원료 및 제품 <span class="nav-caret">▾</span></span>
+        <span class="nav-group-label">원료·성분 DB <span class="nav-caret">▾</span></span>
         <div class="nav-dropdown">
           <a href="#ingredients" data-tab="ingredients" class="nav-link">개별인정/고시형 원료</a>
           <a href="#compare" data-tab="compare" class="nav-link">기능성별 비교</a>
-          <a href="#products" data-tab="products" class="nav-link">신규 등록 제품</a>
-        </div>
-      </div>
-      <div class="nav-group">
-        <span class="nav-group-label">규제 및 인허가 <span class="nav-caret">▾</span></span>
-        <div class="nav-dropdown">
-          <a href="#nifds" data-tab="nifds" class="nav-link">심의 관련</a>
-          <a href="#minutes" data-tab="minutes" class="nav-link">식약처 회의록</a>
-          <a href="#laws" data-tab="laws" class="nav-link">가이드라인/공전/법령</a>
-          <a href="#biomarkers" data-tab="biomarkers" class="nav-link">기능성별 프로토콜</a>
-          <a href="#trials" data-tab="trials" class="nav-link">임상정보 DB</a>
           <a href="#foodraw" data-tab="foodraw" class="nav-link">식품원료목록</a>
           <a href="#safety-db" data-tab="safety-db" class="nav-link">안전성 DB</a>
         </div>
       </div>
       <div class="nav-group">
-        <span class="nav-group-label">시장 및 트렌드 <span class="nav-caret">▾</span></span>
+        <span class="nav-group-label">임상·연구설계 <span class="nav-caret">▾</span></span>
         <div class="nav-dropdown">
+          <a href="#biomarkers" data-tab="biomarkers" class="nav-link">기능성별 프로토콜</a>
+          <a href="#trials" data-tab="trials" class="nav-link">임상정보 DB</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <span class="nav-group-label">인허가·심의 자료 <span class="nav-caret">▾</span></span>
+        <div class="nav-dropdown">
+          <a href="#nifds" data-tab="nifds" class="nav-link">심의 관련</a>
+          <a href="#minutes" data-tab="minutes" class="nav-link">식약처 회의록</a>
+          <a href="#laws" data-tab="laws" class="nav-link">가이드라인/공전/법령</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <span class="nav-group-label">시장·동향 <span class="nav-caret">▾</span></span>
+        <div class="nav-dropdown">
+          <a href="#products" data-tab="products" class="nav-link">신규 등록 제품</a>
           <a href="#market" data-tab="market" class="nav-link">시장현황</a>
           <a href="#news" data-tab="news" class="nav-link">식품 뉴스</a>
           <a href="#events" data-tab="events" class="nav-link">학회/박람회</a>
@@ -105,36 +110,46 @@
         <div class="hero-cat">
           <div class="hero-cat-header">
             <span class="hero-cat-icon">01</span>
-            <span class="hero-cat-label">원료 및 제품</span>
+            <span class="hero-cat-label">원료·성분 DB</span>
           </div>
           <div class="hero-cat-cards">
             <a class="nav-card" data-goto="ingredients"><span class="nav-card-icon">원료</span><span class="nav-card-title">개별·고시형 원료</span><span class="nav-card-desc">인정 현황·전환 이력</span></a>
             <a class="nav-card" data-goto="compare"><span class="nav-card-icon">비교</span><span class="nav-card-title">기능성별 비교</span><span class="nav-card-desc">카테고리별 정렬 보기</span></a>
-            <a class="nav-card" data-goto="products"><span class="nav-card-icon">제품</span><span class="nav-card-title">신규 등록 제품</span><span class="nav-card-desc">최근 신고 목록</span></a>
+            <a class="nav-card" data-goto="foodraw"><span class="nav-card-icon">목록</span><span class="nav-card-title">식품원료목록</span><span class="nav-card-desc">별표 원료 검색</span></a>
+            <a class="nav-card" data-goto="safety-db"><span class="nav-card-icon">안전</span><span class="nav-card-title">안전성 DB</span><span class="nav-card-desc">내장 9종·외부 49종</span></a>
           </div>
         </div>
 
         <div class="hero-cat">
           <div class="hero-cat-header">
             <span class="hero-cat-icon">02</span>
-            <span class="hero-cat-label">규제 및 인허가</span>
+            <span class="hero-cat-label">임상·연구설계</span>
           </div>
           <div class="hero-cat-cards">
-            <a class="nav-card" data-goto="nifds"><span class="nav-card-icon">심의</span><span class="nav-card-title">심의 관련</span><span class="nav-card-desc">위원 명단·담당부서</span></a>
-            <a class="nav-card" data-goto="minutes"><span class="nav-card-icon">회의</span><span class="nav-card-title">식약처 회의록</span><span class="nav-card-desc">회차별 대상 원료</span></a>
-            <a class="nav-card" data-goto="laws"><span class="nav-card-icon">자료</span><span class="nav-card-title">가이드라인/공전/법령</span><span class="nav-card-desc">작성 기준·공식 자료</span></a>
             <a class="nav-card" data-goto="biomarkers"><span class="nav-card-icon">지표</span><span class="nav-card-title">기능성별 프로토콜</span><span class="nav-card-desc">대상자·시험모델</span></a>
             <a class="nav-card" data-goto="trials"><span class="nav-card-icon">DB</span><span class="nav-card-title">임상정보 DB</span><span class="nav-card-desc">NCT·기관·평가변수</span></a>
-            <a class="nav-card" data-goto="foodraw"><span class="nav-card-icon">목록</span><span class="nav-card-title">식품원료목록</span><span class="nav-card-desc">별표 원료 검색</span></a>
           </div>
         </div>
 
         <div class="hero-cat">
           <div class="hero-cat-header">
             <span class="hero-cat-icon">03</span>
-            <span class="hero-cat-label">시장 및 트렌드</span>
+            <span class="hero-cat-label">인허가·심의 자료</span>
           </div>
           <div class="hero-cat-cards">
+            <a class="nav-card" data-goto="nifds"><span class="nav-card-icon">심의</span><span class="nav-card-title">심의 관련</span><span class="nav-card-desc">위원 명단·담당부서</span></a>
+            <a class="nav-card" data-goto="minutes"><span class="nav-card-icon">회의</span><span class="nav-card-title">식약처 회의록</span><span class="nav-card-desc">회차별 대상 원료</span></a>
+            <a class="nav-card" data-goto="laws"><span class="nav-card-icon">자료</span><span class="nav-card-title">가이드라인/공전/법령</span><span class="nav-card-desc">작성 기준·공식 자료</span></a>
+          </div>
+        </div>
+
+        <div class="hero-cat">
+          <div class="hero-cat-header">
+            <span class="hero-cat-icon">04</span>
+            <span class="hero-cat-label">시장·동향</span>
+          </div>
+          <div class="hero-cat-cards">
+            <a class="nav-card" data-goto="products"><span class="nav-card-icon">제품</span><span class="nav-card-title">신규 등록 제품</span><span class="nav-card-desc">최근 신고 목록</span></a>
             <a class="nav-card" data-goto="market"><span class="nav-card-icon">시장</span><span class="nav-card-title">시장현황</span><span class="nav-card-desc">매출·기능성 추이</span></a>
             <a class="nav-card" data-goto="news"><span class="nav-card-icon">뉴스</span><span class="nav-card-title">식품 뉴스</span><span class="nav-card-desc">업계 동향 기사</span></a>
             <a class="nav-card" data-goto="events"><span class="nav-card-icon">일정</span><span class="nav-card-title">학회/박람회</span><span class="nav-card-desc">국내외 주요 일정</span></a>
