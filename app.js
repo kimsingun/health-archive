@@ -986,6 +986,9 @@ function setupTabs() {
     if (tab === 'market' && typeof initMarketTab === 'function') {
       requestAnimationFrame(initMarketTab);
     }
+    if (tab === 'safety-db' && typeof initSafetyDbTab === 'function') {
+      requestAnimationFrame(initSafetyDbTab);
+    }
   }
   window.navigateTo = activate;
 

@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=20260630-feedback2">
+<link rel="stylesheet" href="style.css?v=20260701-safetydb1">
 </head>
 <body>
 <header class="site-header">
@@ -32,6 +32,7 @@
           <a href="#biomarkers" data-tab="biomarkers" class="nav-link">기능성별 프로토콜</a>
           <a href="#trials" data-tab="trials" class="nav-link">임상정보 DB</a>
           <a href="#foodraw" data-tab="foodraw" class="nav-link">식품원료목록</a>
+          <a href="#safety-db" data-tab="safety-db" class="nav-link">안전성 DB</a>
         </div>
       </div>
       <div class="nav-group">
@@ -859,6 +860,40 @@
     </div>
   </section>
 
+  <section id="safety-db" class="tab-section">
+    <div class="section-title-row">
+      <div>
+        <h2>안전성 DB 통합검색</h2>
+        <p class="compare-intro">국내외 공식 안전성·신소재식품 데이터베이스 9종(내장 12,573건)을 한 번에 검색하고, 외부 49개 데이터베이스로 바로 연결합니다.</p>
+      </div>
+      <span class="section-badge">내장 9개 · 외부 49개</span>
+    </div>
+
+    <div class="sdb-overview" id="sdb-overview"></div>
+
+    <div class="toolbar">
+      <input type="text" id="sdb-q" placeholder="DB 로딩 중…" disabled>
+      <button type="button" id="sdb-search-btn" class="sdb-search-btn" disabled>로딩중…</button>
+      <button type="button" id="sdb-reset-btn" class="sdb-reset-btn">초기화</button>
+      <span class="result-count" id="sdb-total"></span>
+    </div>
+
+    <div class="sdb-init-msg" id="sdb-init-msg">성분명을 입력하면 내장 DB 결과와 외부 DB 링크를 함께 제공합니다 (영문 권장).</div>
+
+    <div class="sdb-results" id="sdb-results">
+      <div class="sdb-section">
+        <div class="sdb-section-hd"><span class="sdb-section-title">내장 DB 결과</span><span class="result-count" id="sdb-db-total"></span></div>
+        <div class="sdb-filter-row" id="sdb-filter-row"></div>
+        <div class="sdb-card-grid" id="sdb-card-grid"></div>
+      </div>
+
+      <div class="sdb-section">
+        <div class="sdb-section-hd"><span class="sdb-section-title">외부 DB 링크</span><span class="result-count" id="sdb-ext-note"></span></div>
+        <div id="sdb-ext-sectors"></div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <div class="intro-modal-overlay" id="intro-modal-overlay">
@@ -900,7 +935,9 @@
 <script src="data/status.js?v=20260630-news0930"></script>
 <script src="data/food_ingredients.js"></script>
 <script src="data/daily_quotes.js"></script>
+<script src="data/safety_db.js"></script>
 <script src="market.js"></script>
+<script src="safety-db.js?v=20260701-safetydb1"></script>
 <script src="app.js?v=20260630-home-cleanup"></script>
 <script type="module" src="feedback.js?v=20260630-feedback1"></script>
 </body>
