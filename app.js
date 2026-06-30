@@ -122,10 +122,6 @@ function routeHeroSearch(target, q, options = {}) {
     const input = document.getElementById('news-search');
     input.value = q;
     input.dispatchEvent(new Event('input'));
-  } else if (target === 'papers') {
-    const input = document.getElementById('papers-search');
-    input.value = q;
-    input.dispatchEvent(new Event('input'));
   } else if (target === 'biomarkers') {
     const input = document.getElementById('biomarker-search');
     if (input) {
@@ -156,7 +152,6 @@ const GLOBAL_SEARCH_GROUPS = [
   ['ingredients', '개별인정/고시형 원료'],
   ['minutes', '회의록'],
   ['products', '신규 제품'],
-  ['papers', '논문 리포트'],
   ['biomarkers', '기능성별 프로토콜'],
   ['trials', '임상정보 DB'],
   ['news', '뉴스'],
@@ -168,7 +163,6 @@ const GLOBAL_RESULT_BADGE_LABELS = {
   ingredients: '원료',
   minutes: '회의록',
   products: '제품',
-  papers: '리포트',
   biomarkers: '지표',
   trials: '임상',
   news: '뉴스',
@@ -227,16 +221,6 @@ function collectGlobalSearchResults(q) {
     fmtProductDate(p.reportDate),
     p.name,
     `${p.name} ${p.company} ${p.efficacy} ${p.reportNo}`
-  ));
-
-  const papers = (typeof PAPER_REPORTS_DATA !== 'undefined') ? PAPER_REPORTS_DATA : [];
-  papers.forEach(p => add(
-    'papers', 'papers',
-    p.title,
-    [p.journal, (p.matchedSubstances || []).join(', ')].filter(Boolean).join(' · '),
-    p.collectedDate || '',
-    p.title,
-    `${p.title} ${p.journal} ${(p.matchedSubstances || []).join(' ')} ${(p.biomarkers || []).join(' ')}`
   ));
 
   const biomarkerProtocols = (typeof BIOMARKER_PROTOCOLS !== 'undefined') ? BIOMARKER_PROTOCOLS : {};
@@ -1171,50 +1155,6 @@ function setupProducts() {
   });
 }
 
-// ---------- 원료 분석 리포트 ----------
-
-const STUDY_TYPE_LABEL = { clinical: '임상시험', invivo: '동물(in vivo)', unknown: '미분류' };
-
-function paperScholarUrl(p) {
-  const q = p.scholarUrl
-    ? ''
-    : encodeURIComponent(p.doi || p.title || '');
-  return p.scholarUrl || `https://scholar.google.com/scholar?q=${q}`;
-}
-
-function renderPapers(list) {
-  const tbody = document.querySelector('#papers-table tbody');
-  tbody.innerHTML = list.map(p => `
-    <tr>
-      <td>${escapeHtml(p.collectedDate || '-')}</td>
-      <td><span class="study-badge study-${escapeHtml(p.studyType || 'unknown')}">${escapeHtml(STUDY_TYPE_LABEL[p.studyType] || '미분류')}</span></td>
-      <td class="name">${escapeHtml(p.title)}</td>
-      <td>${escapeHtml(p.journal || '-')}</td>
-      <td>${(p.matchedSubstances || []).map(s => `<span class="ing-tag">${escapeHtml(s)}</span>`).join('')}</td>
-      <td>${p.pdfFile ? `<a class="report-link" href="paper-reports/${encodeURIComponent(p.pdfFile)}?v=20260629-sourcepdf" target="_blank" rel="noopener">PDF</a>` : '<span class="report-none">-</span>'}</td>
-      <td>${p.sourcePdfFile ? `<a class="report-link" href="paper-source-pdfs/${encodeURIComponent(p.sourcePdfFile)}?v=20260629-sourcepdf" target="_blank" rel="noopener">PDF</a>` : '<span class="report-none">-</span>'}</td>
-      <td class="paper-tools">
-        ${p.url ? `<a class="report-link" href="${escapeHtml(p.url)}" target="_blank" rel="noopener">PubMed</a>` : ''}
-        <a class="report-link" href="${escapeHtml(paperScholarUrl(p))}" target="_blank" rel="noopener">Scholar</a>
-      </td>
-    </tr>
-  `).join('');
-  document.getElementById('papers-count').textContent = `${list.length}건`;
-}
-
-function setupPapers() {
-  const all = (typeof PAPER_REPORTS_DATA !== 'undefined') ? PAPER_REPORTS_DATA.slice() : [];
-  all.sort((a, b) => (b.collectedDate || '').localeCompare(a.collectedDate || ''));
-  renderPapers(all);
-  document.getElementById('papers-search').addEventListener('input', e => {
-    const q = e.target.value.trim().toLowerCase();
-    const filtered = q
-      ? all.filter(p => `${p.title} ${p.journal} ${(p.matchedSubstances||[]).join(' ')} ${(p.biomarkers||[]).join(' ')}`.toLowerCase().includes(q))
-      : all;
-    renderPapers(filtered);
-  });
-}
-
 // ---------- 식품 뉴스 ----------
 
 function fmtNewsDate(s) {
@@ -1710,7 +1650,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBiomarkers();
   setupNews();
   setupProducts();
-  setupPapers();
   setupTrials();
   setupFoodRaw();
   renderHeroNews();
