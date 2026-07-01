@@ -1684,25 +1684,29 @@ function setupGmoMinutes() {
   function render() {
     const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
     const yr = activeYear();
+    // 결과 타입만, PDF 있는 것만
     const list = data.filter(m => {
+      if (m.kind !== '결과') return false;
+      if (!m.pdfUrls || !m.pdfUrls.length) return false;
       if (yr !== '전체' && !(m.date||'').startsWith(yr)) return false;
       if (!q) return true;
-      return (String(m.meetingNo) + m.title + m.date + m.kind).toLowerCase().includes(q);
+      return (String(m.meetingNo) + m.title + m.date).toLowerCase().includes(q);
     });
+    if (totalEl) totalEl.textContent = list.length;
     if (countEl) countEl.textContent = `${list.length}건`;
     tbody.innerHTML = list.map(m => {
-      const pdfLinks = (m.pdfUrls||[]).map((u,i) =>
-        `<a href="${escapeHtml(u)}" target="_blank" rel="noopener" class="pdf-link">PDF${(m.pdfUrls.length>1?' '+(i+1):'')}</a>`
-      ).join(' ');
-      const kindBadge = m.kind === '결과'
-        ? '<span class="badge-ingr" style="background:#e8f5e9;color:#2e7d32">결과</span>'
-        : '<span class="badge-raw" style="background:#e3f2fd;color:#1565c0">안내</span>';
+      // PDF URL만 (file_seq=1), HWP 제외
+      const pdfUrl = (m.pdfUrls||[]).find(u => u.includes('file_seq=1')) || m.pdfUrls[0];
+      const r2Url = m.r2Url; // R2에 업로드된 경우 사용
+      const linkUrl = r2Url || pdfUrl;
+      const pdfLink = linkUrl
+        ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener" class="report-link">회의록 보기</a>`
+        : '-';
       return `<tr>
         <td>${escapeHtml((m.date||'').slice(0,4))}</td>
         <td>${escapeHtml(m.title)}</td>
-        <td>${kindBadge}</td>
         <td>${escapeHtml(m.date)}</td>
-        <td>${pdfLinks || '-'}</td>
+        <td>${pdfLink}</td>
       </tr>`;
     }).join('');
   }
