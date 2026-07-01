@@ -1889,6 +1889,48 @@ function setupFoodRaw() {
   render();
 }
 
+function setupTempApproval() {
+  if (typeof TEMP_APPROVAL_DATA === 'undefined') return;
+  const data = TEMP_APPROVAL_DATA;
+  const input = document.getElementById('temp-approval-search');
+  const tbody = document.getElementById('temp-approval-tbody');
+  const countEl = document.getElementById('temp-approval-count');
+  const totalEl = document.getElementById('temp-approval-count-total');
+  if (totalEl) totalEl.textContent = data.length;
+
+  const DETAIL_BASE = 'https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=2966&bbs_no=bbs1235&menu_grp=MENU_NEW04&ntctxt_no=';
+
+  function hl(text, q) {
+    if (!q || !text) return escapeHtml(text || '');
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escapeHtml(text).replace(new RegExp('(' + esc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
+  }
+
+  function render() {
+    const q = input.value.trim().toLowerCase();
+    const filtered = q ? data.filter(r =>
+      (r.name || '').toLowerCase().includes(q) ||
+      (r.company || '').toLowerCase().includes(q) ||
+      (r.certNo || '').toLowerCase().includes(q)
+    ) : data;
+
+    countEl.textContent = filtered.length + '건';
+    const qRaw = input.value.trim();
+    tbody.innerHTML = filtered.map(r =>
+      '<tr>' +
+        '<td><strong>' + hl(r.name, qRaw) + '</strong></td>' +
+        '<td>' + hl(r.company, qRaw) + '</td>' +
+        '<td class="code">' + hl(r.certNo, qRaw) + '</td>' +
+        '<td>' + (r.year || '') + '</td>' +
+        '<td><a href="' + DETAIL_BASE + r.seq + '" target="_blank" rel="noopener" class="pdf-link">보기 ↗</a></td>' +
+      '</tr>'
+    ).join('');
+  }
+
+  input.addEventListener('input', render);
+  render();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
   setupLawTabs();
@@ -1901,6 +1943,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupProducts();
   setupTrials();
   setupFoodRaw();
+  setupTempApproval();
   setupBlocked();
   setupGmoMinutes();
   setupGmoIngredients();

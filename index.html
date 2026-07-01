@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=20260701-blocked1">
+<link rel="stylesheet" href="style.css?v=20260701-tempapproval1">
 </head>
 <body>
 <header class="site-header">
@@ -21,6 +21,7 @@
           <a href="#ingredients" data-tab="ingredients" class="nav-link">개별인정/고시형 원료</a>
           <a href="#compare" data-tab="compare" class="nav-link">기능성별 비교</a>
           <a href="#foodraw" data-tab="foodraw" class="nav-link">식품원료목록</a>
+          <a href="#temp-approval" data-tab="temp-approval" class="nav-link">한시적 인정 원료</a>
           <a href="#blocked" data-tab="blocked" class="nav-link">해외직구 차단 원료·성분</a>
           <a href="#gmo-ingredients" data-tab="gmo-ingredients" class="nav-link">유전자재조합식품 원료</a>
           <a href="#safety-db" data-tab="safety-db" class="nav-link">안전성 데이터베이스</a>
@@ -617,6 +618,27 @@
     <div id="foodraw-pagination" class="foodraw-pagination"></div>
   </section>
 
+  <section id="temp-approval" class="tab-section">
+    <h2>한시적 인정 원료 <small style="font-weight:400;font-size:14px;color:#888;">(식품원료 한시적 인정 현황)</small></h2>
+    <p style="color:#aaa;margin:-8px 0 16px;font-size:13px;">식품안전나라에 등재된 식품원료 한시적 인정 목록입니다. (총 <span id="temp-approval-count-total"></span>건) <a href="https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=2966&bbs_no=bbs018&ntctxt_no=21226&menu_grp=MENU_NEW04" target="_blank" rel="noopener" style="color:#4f8ef7;font-size:12px;">식품안전나라 원문 ↗</a></p>
+    <div class="foodraw-toolbar">
+      <input type="text" id="temp-approval-search" class="foodraw-input" placeholder="원료명, 회사명, 인정번호 검색...">
+      <span class="foodraw-count" id="temp-approval-count"></span>
+    </div>
+    <table class="data-table" style="margin-top:12px;">
+      <thead>
+        <tr>
+          <th style="width:42%">원료명</th>
+          <th style="width:26%">신청회사</th>
+          <th style="width:14%">인정번호</th>
+          <th style="width:10%">인정연도</th>
+          <th style="width:8%">상세</th>
+        </tr>
+      </thead>
+      <tbody id="temp-approval-tbody"></tbody>
+    </table>
+  </section>
+
   <section id="blocked" class="tab-section">
     <h2>해외직구식품 국내 반입차단 원료·성분</h2>
     <p class="compare-intro">식약처가 지정한 해외직구 식품 반입차단 목록입니다. 수입식품안전관리 특별법 제25조의3에 따라 국내 반입이 금지된 원료·성분 <b id="blocked-total"></b>건입니다.</p>
@@ -1019,6 +1041,7 @@
 <script src="data/news_thinkfood.js?v=20260630-news0930"></script>
 <script src="data/status.js?v=20260630-news0930"></script>
 <script src="data/food_ingredients.js"></script>
+<script src="data/temp_approval.js"></script>
 <script src="data/blocked_ingredients.js"></script>
 <script src="data/gmo_minutes.js"></script>
 <script src="data/gmo_ingredients.js"></script>
