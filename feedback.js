@@ -1,191 +1,180 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, query, where, orderBy,
-  onSnapshot, serverTimestamp, Timestamp, limit
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+(function () {
+  var API = 'https://healtharchive-api.kimsingun.workers.dev';
+  var ADMIN_PW = '7835';
+  var TOKENS_KEY = 'ha_board_tokens';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCW8R3vHcAxld6X4fAU7wYPJbxeYvbpAi8",
-  authDomain: "healtharchive-a07ca.firebaseapp.com",
-  projectId: "healtharchive-a07ca",
-  storageBucket: "healtharchive-a07ca.firebasestorage.app",
-  messagingSenderId: "433356772083",
-  appId: "1:433356772083:web:bd350d43b03da328e45d86"
-};
+  function isAdmin() { return sessionStorage.getItem('ha_bd_admin') === '1'; }
 
-const RETENTION_DAYS = 10;
-const ADMIN_PASSCODE = "7835";
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const messagesCol = collection(db, "feedback_messages");
-
-function getVisitorId() {
-  let id = localStorage.getItem("ha_fb_visitor_id");
-  if (!id) {
-    id = Math.random().toString(36).slice(2, 8);
-    localStorage.setItem("ha_fb_visitor_id", id);
-  }
-  return id;
-}
-
-function visitorLabel(id) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  return `손님${(hash % 9000) + 1000}`;
-}
-
-function visitorColor(id) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  const palette = ["#6c5ce7", "#0984e3", "#00b894", "#e17055", "#d63031", "#0fb9b1", "#fd79a8", "#636e72"];
-  return palette[hash % palette.length];
-}
-
-function isAdmin() {
-  return sessionStorage.getItem("ha_fb_admin") === "1";
-}
-
-function escapeHtml(s) {
-  return String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
-}
-
-function formatTime(ts) {
-  if (!ts || !ts.toDate) return "";
-  const d = ts.toDate();
-  return d.toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
-}
-
-function renderMessages(docs) {
-  const wrap = document.getElementById("fb-messages");
-  const empty = document.getElementById("fb-empty");
-  if (!wrap) return;
-
-  if (!docs.length) {
-    wrap.innerHTML = "";
-    wrap.appendChild(empty || document.createElement("div"));
-    if (empty) empty.hidden = false;
-    return;
+  function getTokens() {
+    try { return JSON.parse(localStorage.getItem(TOKENS_KEY) || '{}'); } catch (e) { return {}; }
   }
 
-  const myId = getVisitorId();
-  wrap.innerHTML = docs.map(d => {
-    const m = d.data();
-    const isMine = m.sender === "visitor" && m.visitorId === myId;
-    const isAdminMsg = m.sender === "admin";
-    const bubbleClass = isAdminMsg ? "fb-bubble fb-bubble-admin" : (isMine ? "fb-bubble fb-bubble-me" : "fb-bubble fb-bubble-other");
-    const rowClass = isAdminMsg ? "fb-row fb-row-admin" : (isMine ? "fb-row fb-row-me" : "fb-row fb-row-other");
-    const label = isAdminMsg ? "관리자" : visitorLabel(m.visitorId || "");
-    const color = isAdminMsg ? "#3a3a3a" : visitorColor(m.visitorId || "");
-    const showLabel = !isMine;
-    return `
-      <div class="${rowClass}">
-        ${showLabel ? `<div class="fb-sender" style="color:${color}">${escapeHtml(label)}</div>` : ""}
-        <div class="${bubbleClass}">${escapeHtml(m.text)}</div>
-        <div class="fb-time">${formatTime(m.createdAt)}</div>
-      </div>`;
-  }).join("");
-  wrap.scrollTop = wrap.scrollHeight;
-}
-
-function subscribeMessages() {
-  const cutoff = Timestamp.fromMillis(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000);
-  const q = query(
-    messagesCol,
-    where("createdAt", ">=", cutoff),
-    orderBy("createdAt", "asc"),
-    limit(500)
-  );
-  onSnapshot(q, snap => {
-    renderMessages(snap.docs);
-  }, err => {
-    const wrap = document.getElementById("fb-messages");
-    if (wrap) wrap.innerHTML = `<div class="fb-empty">메시지를 불러오지 못했습니다. (${escapeHtml(err.message)})</div>`;
-  });
-}
-
-async function sendMessage(text) {
-  const trimmed = text.trim().slice(0, 200);
-  if (!trimmed) return;
-  await addDoc(messagesCol, {
-    text: trimmed,
-    sender: isAdmin() ? "admin" : "visitor",
-    visitorId: getVisitorId(),
-    createdAt: serverTimestamp()
-  });
-}
-
-function setupComposer() {
-  const input = document.getElementById("fb-input");
-  const sendBtn = document.getElementById("fb-send");
-  const count = document.getElementById("fb-count");
-  if (!input || !sendBtn) return;
-
-  input.addEventListener("input", () => {
-    count.textContent = String(input.value.length);
-  });
-
-  async function doSend() {
-    const text = input.value;
-    if (!text.trim()) return;
-    sendBtn.disabled = true;
-    try {
-      await sendMessage(text);
-      input.value = "";
-      count.textContent = "0";
-    } catch (e) {
-      alert("전송에 실패했습니다: " + e.message);
-    } finally {
-      sendBtn.disabled = false;
-      input.focus();
-    }
+  function saveToken(id, token) {
+    var t = getTokens(); t[id] = token;
+    localStorage.setItem(TOKENS_KEY, JSON.stringify(t));
   }
 
-  sendBtn.addEventListener("click", doSend);
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      doSend();
-    }
-  });
-}
-
-function setupAdminToggle() {
-  const titleEl = document.getElementById("fb-admin-toggle");
-  const banner = document.getElementById("fb-admin-banner");
-  const exitBtn = document.getElementById("fb-admin-exit");
-  if (!titleEl) return;
-
-  function reflect() {
-    if (banner) banner.hidden = !isAdmin();
-  }
-
-  titleEl.addEventListener("click", () => {
-    if (isAdmin()) return;
-    const pw = prompt("관리자 비밀번호를 입력하세요");
-    if (pw === null) return;
-    if (pw === ADMIN_PASSCODE) {
-      sessionStorage.setItem("ha_fb_admin", "1");
-      reflect();
-    } else {
-      alert("비밀번호가 올바르지 않습니다.");
-    }
-  });
-
-  if (exitBtn) {
-    exitBtn.addEventListener("click", () => {
-      sessionStorage.removeItem("ha_fb_admin");
-      reflect();
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
 
-  reflect();
-}
+  function formatDate(ts) {
+    var d = new Date(ts * 1000);
+    return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' +
+      String(d.getDate()).padStart(2, '0') + ' ' +
+      String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  setupComposer();
-  setupAdminToggle();
-  subscribeMessages();
-});
+  function renderList(posts) {
+    var list = document.getElementById('bd-list');
+    var empty = document.getElementById('bd-empty');
+    if (!list) return;
+
+    if (!posts.length) {
+      list.innerHTML = '';
+      if (empty) list.appendChild(empty);
+      if (empty) empty.hidden = false;
+      return;
+    }
+
+    var tokens = getTokens();
+    var html = posts.map(function (p) {
+      var canDelete = isAdmin() || !!tokens[p.id];
+      return '<div class="bd-post" id="post-' + p.id + '">' +
+        '<div class="bd-post-text">' + escapeHtml(p.text) + '</div>' +
+        '<div class="bd-post-foot">' +
+        '<span class="bd-post-date">' + formatDate(p.created_at) + '</span>' +
+        (canDelete ? '<button type="button" class="bd-delete-btn" data-id="' + p.id + '">삭제</button>' : '') +
+        '</div>' +
+        '</div>';
+    }).join('');
+
+    list.innerHTML = html;
+
+    list.querySelectorAll('.bd-delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        deletePost(btn.getAttribute('data-id'));
+      });
+    });
+  }
+
+  function loadPosts() {
+    fetch(API + '/posts')
+      .then(function (r) { return r.json(); })
+      .then(renderList)
+      .catch(function () {
+        var list = document.getElementById('bd-list');
+        if (list) list.innerHTML = '<div class="bd-empty">게시물을 불러오지 못했습니다. 새로고침해 주세요.</div>';
+      });
+  }
+
+  function deletePost(id) {
+    if (!confirm('이 게시물을 삭제하시겠습니까?')) return;
+    var tokens = getTokens();
+    var token = isAdmin() ? ADMIN_PW : (tokens[id] || '');
+
+    fetch(API + '/posts/' + id, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          delete tokens[id];
+          localStorage.setItem(TOKENS_KEY, JSON.stringify(tokens));
+          var el = document.getElementById('post-' + id);
+          if (el) el.remove();
+          var list = document.getElementById('bd-list');
+          if (list && !list.querySelector('.bd-post')) {
+            list.innerHTML = '<div class="bd-empty">아직 게시물이 없습니다. 첫 번째 의견을 남겨보세요!</div>';
+          }
+        } else {
+          alert(data.error || '삭제에 실패했습니다.');
+        }
+      })
+      .catch(function () { alert('오류가 발생했습니다.'); });
+  }
+
+  function setupWrite() {
+    var input = document.getElementById('bd-input');
+    var submit = document.getElementById('bd-submit');
+    var countEl = document.getElementById('bd-count');
+    if (!input || !submit) return;
+
+    input.addEventListener('input', function () {
+      if (countEl) countEl.textContent = input.value.length;
+    });
+
+    submit.addEventListener('click', function () {
+      var text = input.value.trim();
+      if (!text) return;
+      submit.disabled = true;
+
+      fetch(API + '/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.id) {
+            saveToken(data.id, data.deleteToken);
+            input.value = '';
+            if (countEl) countEl.textContent = '0';
+            loadPosts();
+          } else {
+            alert(data.error || '등록에 실패했습니다.');
+          }
+        })
+        .catch(function () { alert('오류가 발생했습니다.'); })
+        .finally(function () { submit.disabled = false; });
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.ctrlKey) submit.click();
+    });
+  }
+
+  function setupAdmin() {
+    var toggle = document.getElementById('bd-admin-toggle');
+    var banner = document.getElementById('bd-admin-banner');
+    var exitBtn = document.getElementById('bd-admin-exit');
+
+    function reflect() {
+      if (banner) banner.hidden = !isAdmin();
+      loadPosts();
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        if (isAdmin()) return;
+        var pw = prompt('관리자 비밀번호를 입력하세요');
+        if (pw === null) return;
+        if (pw === ADMIN_PW) {
+          sessionStorage.setItem('ha_bd_admin', '1');
+          reflect();
+        } else {
+          alert('비밀번호가 올바르지 않습니다.');
+        }
+      });
+    }
+
+    if (exitBtn) {
+      exitBtn.addEventListener('click', function () {
+        sessionStorage.removeItem('ha_bd_admin');
+        reflect();
+      });
+    }
+
+    reflect();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setupWrite();
+    setupAdmin();
+    loadPosts();
+  });
+})();

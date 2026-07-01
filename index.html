@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=20260701-safetydb4">
+<link rel="stylesheet" href="style.css?v=20260701-board1">
 </head>
 <body>
 <header class="site-header">
@@ -851,27 +851,23 @@
 
   <section id="feedback" class="tab-section">
     <div class="section-head">
-      <h2>피드백 및 문의</h2>
-      <p class="section-sub">아직 테스트 단계인 사이트입니다. 익명으로 자유롭게 의견·문의를 남겨주세요. 대화는 작성일로부터 10일간만 보관됩니다.</p>
+      <h2 id="bd-admin-toggle">피드백 및 문의</h2>
+      <p class="section-sub">사이트 테스트 중입니다. 익명으로 자유롭게 의견·오류·문의를 남겨주세요. 게시물은 작성일로부터 30일간 보관됩니다.</p>
     </div>
-    <div class="fb-wrap">
-      <div class="fb-chat-card">
-        <div class="fb-chat-header">
-          <span class="fb-chat-title" id="fb-admin-toggle">피드백 채팅</span>
-        </div>
-        <div id="fb-messages" class="fb-messages">
-          <div class="fb-empty" id="fb-empty">아직 메시지가 없습니다. 첫 메시지를 남겨보세요!</div>
-        </div>
-        <div class="fb-composer">
-          <div id="fb-admin-banner" class="fb-admin-banner" hidden>관리자 모드로 답변 중입니다 <button type="button" id="fb-admin-exit">종료</button></div>
-          <div class="fb-input-row">
-            <textarea id="fb-input" class="fb-input" maxlength="200" placeholder="메시지를 입력하세요 (최대 200자)" rows="2"></textarea>
-            <button type="button" id="fb-send" class="fb-send-btn">전송</button>
-          </div>
-          <div class="fb-input-meta"><span id="fb-count">0</span>/200</div>
+    <div class="bd-wrap">
+      <div id="bd-admin-banner" class="bd-admin-banner" hidden>
+        관리자 모드 활성화 <button type="button" id="bd-admin-exit">종료</button>
+      </div>
+      <div class="bd-write-card">
+        <textarea id="bd-input" class="bd-input" maxlength="200" placeholder="의견이나 문의사항을 입력하세요 (최대 200자, 익명)" rows="3"></textarea>
+        <div class="bd-write-foot">
+          <span class="bd-count"><span id="bd-count">0</span>/200</span>
+          <button type="button" id="bd-submit" class="bd-submit-btn">등록</button>
         </div>
       </div>
-      <div class="fb-contact-note">문의 메일: <a href="mailto:healtharchive2026@gmail.com">healtharchive2026@gmail.com</a></div>
+      <div id="bd-list" class="bd-list">
+        <div class="bd-empty" id="bd-empty">아직 게시물이 없습니다. 첫 번째 의견을 남겨보세요!</div>
+      </div>
     </div>
   </section>
 
@@ -954,6 +950,6 @@
 <script src="market.js"></script>
 <script src="safety-db.js?v=20260701-db-labels"></script>
 <script src="app.js?v=20260701-db-labels"></script>
-<script type="module" src="feedback.js?v=20260630-feedback1"></script>
+<script src="feedback.js?v=20260701-board1"></script>
 </body>
 </html>
