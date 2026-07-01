@@ -1649,6 +1649,111 @@ function setupEventsTabs() {
   });
 }
 
+// ---------- 유전자재조합식품 회의록 ----------
+function setupGmoMinutes() {
+  if (typeof GMO_MINUTES_DATA === 'undefined') return;
+  const data = GMO_MINUTES_DATA;
+  const totalEl = document.getElementById('gmo-min-total');
+  const countEl = document.getElementById('gmo-min-count');
+  const tbody   = document.getElementById('gmo-min-tbody');
+  const sidebar = document.getElementById('gmo-min-year-sidebar');
+  const searchEl= document.getElementById('gmo-min-search');
+  if (!tbody) return;
+  if (totalEl) totalEl.textContent = data.length;
+
+  // 연도 목록 생성
+  const years = [...new Set(data.map(m => (m.date||'').slice(0,4)).filter(Boolean))].sort((a,b)=>b-a);
+  if (sidebar) {
+    sidebar.innerHTML = ['전체', ...years].map((y,i) =>
+      `<button class="year-btn${i===0?' active':''}" data-year="${y}">${y}</button>`
+    ).join('');
+    sidebar.querySelectorAll('.year-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sidebar.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+      });
+    });
+  }
+
+  function activeYear() {
+    const b = sidebar ? sidebar.querySelector('.year-btn.active') : null;
+    return b ? b.dataset.year : '전체';
+  }
+
+  function render() {
+    const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
+    const yr = activeYear();
+    const list = data.filter(m => {
+      if (yr !== '전체' && !(m.date||'').startsWith(yr)) return false;
+      if (!q) return true;
+      return (String(m.meetingNo) + m.title + m.date + m.kind).toLowerCase().includes(q);
+    });
+    if (countEl) countEl.textContent = `${list.length}건`;
+    tbody.innerHTML = list.map(m => {
+      const pdfLinks = (m.pdfUrls||[]).map((u,i) =>
+        `<a href="${escapeHtml(u)}" target="_blank" rel="noopener" class="pdf-link">PDF${(m.pdfUrls.length>1?' '+(i+1):'')}</a>`
+      ).join(' ');
+      const kindBadge = m.kind === '결과'
+        ? '<span class="badge-ingr" style="background:#e8f5e9;color:#2e7d32">결과</span>'
+        : '<span class="badge-raw" style="background:#e3f2fd;color:#1565c0">안내</span>';
+      return `<tr>
+        <td>${escapeHtml((m.date||'').slice(0,4))}</td>
+        <td>${escapeHtml(m.title)}</td>
+        <td>${kindBadge}</td>
+        <td>${escapeHtml(m.date)}</td>
+        <td>${pdfLinks || '-'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  if (searchEl) searchEl.addEventListener('input', render);
+  render();
+}
+
+// ---------- 유전자재조합식품 심사 원료 ----------
+function setupGmoIngredients() {
+  if (typeof GMO_INGREDIENTS_DATA === 'undefined') return;
+  const data = GMO_INGREDIENTS_DATA;
+  const totalEl = document.getElementById('gmo-ingr-total');
+  const countEl = document.getElementById('gmo-ingr-count');
+  const tbody   = document.getElementById('gmo-ingr-tbody');
+  const searchEl= document.getElementById('gmo-ingr-search');
+  if (!tbody) return;
+  if (totalEl) totalEl.textContent = data.length;
+
+  // meetingNo → seq 매핑 (PDF 링크용)
+  const minMap = {};
+  if (typeof GMO_MINUTES_DATA !== 'undefined') {
+    GMO_MINUTES_DATA.filter(m => m.kind === '결과' && m.pdfUrls && m.pdfUrls.length).forEach(m => {
+      minMap[m.meetingNo] = m.pdfUrls[0];
+    });
+  }
+
+  function render() {
+    const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
+    const list = q ? data.filter(r =>
+      (r.name + r.company + String(r.meetingNo) + r.date).toLowerCase().includes(q)
+    ) : data;
+    if (countEl) countEl.textContent = `${list.length}건`;
+    tbody.innerHTML = list.map(r => {
+      const pdfUrl = minMap[r.meetingNo];
+      const pdfLink = pdfUrl
+        ? `<a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener" class="pdf-link">PDF</a>`
+        : '-';
+      return `<tr>
+        <td>제${escapeHtml(String(r.meetingNo))}차</td>
+        <td>${escapeHtml(r.date)}</td>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${pdfLink}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  if (searchEl) searchEl.addEventListener('input', render);
+  render();
+}
+
 // ---------- 해외직구 차단 원료·성분 ----------
 function setupBlocked() {
   if (typeof BLOCKED_INGREDIENTS_DATA === 'undefined') return;
@@ -1786,6 +1891,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupTrials();
   setupFoodRaw();
   setupBlocked();
+  setupGmoMinutes();
+  setupGmoIngredients();
   renderHeroNews();
   renderDailyQuote();
   setupVisitorCounter();

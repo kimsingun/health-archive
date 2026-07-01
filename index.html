@@ -22,6 +22,7 @@
           <a href="#compare" data-tab="compare" class="nav-link">기능성별 비교</a>
           <a href="#foodraw" data-tab="foodraw" class="nav-link">식품원료목록</a>
           <a href="#blocked" data-tab="blocked" class="nav-link">해외직구 차단 원료·성분</a>
+          <a href="#gmo-ingredients" data-tab="gmo-ingredients" class="nav-link">유전자재조합식품 원료</a>
           <a href="#safety-db" data-tab="safety-db" class="nav-link">안전성 데이터베이스</a>
         </div>
       </div>
@@ -37,6 +38,7 @@
         <div class="nav-dropdown">
           <a href="#nifds" data-tab="nifds" class="nav-link">심의 관련</a>
           <a href="#minutes" data-tab="minutes" class="nav-link">식약처 회의록</a>
+          <a href="#gmo-minutes" data-tab="gmo-minutes" class="nav-link">유전자재조합식품 회의록</a>
           <a href="#laws" data-tab="laws" class="nav-link">가이드라인/공전/법령</a>
         </div>
       </div>
@@ -274,6 +276,28 @@
               <tr><th>연도</th><th>회의명</th><th>대상 원료</th><th>회의록</th></tr>
             </thead>
             <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gmo-minutes" class="tab-section">
+    <h2>유전자변형식품등 안전성심사위원회 회의록</h2>
+    <p class="compare-intro">국립식품과학원 유전자변형식품등 안전성심사위원회 회의 안내·결과 목록입니다. 결과 게시물에는 PDF 회의록이 첨부됩니다. (<span id="gmo-min-total"></span>건)</p>
+    <div class="year-layout">
+      <aside class="year-sidebar" id="gmo-min-year-sidebar"></aside>
+      <div class="year-main">
+        <div class="toolbar">
+          <input type="text" id="gmo-min-search" placeholder="회차, 연도, 결과/안내로 검색...">
+          <span class="result-count" id="gmo-min-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table id="gmo-min-table">
+            <thead>
+              <tr><th>연도</th><th>회의명</th><th>구분</th><th>날짜</th><th>회의록 PDF</th></tr>
+            </thead>
+            <tbody id="gmo-min-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -620,6 +644,23 @@
           </tr>
         </thead>
         <tbody id="blocked-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="gmo-ingredients" class="tab-section">
+    <h2>유전자재조합식품 심사 원료·성분</h2>
+    <p class="compare-intro">국립식품과학원 유전자변형식품등 안전성심사위원회 심사 대상 원료·성분 목록입니다. (<span id="gmo-ingr-total"></span>건)</p>
+    <div class="toolbar">
+      <input type="text" id="gmo-ingr-search" placeholder="원료·성분명, 신청 회차, 날짜 검색...">
+      <span class="result-count" id="gmo-ingr-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="gmo-ingr-table">
+        <thead>
+          <tr><th>회의 회차</th><th>심의일</th><th>원료·성분명</th><th>회의록</th></tr>
+        </thead>
+        <tbody id="gmo-ingr-tbody"></tbody>
       </table>
     </div>
   </section>
@@ -979,6 +1020,8 @@
 <script src="data/status.js?v=20260630-news0930"></script>
 <script src="data/food_ingredients.js"></script>
 <script src="data/blocked_ingredients.js"></script>
+<script src="data/gmo_minutes.js"></script>
+<script src="data/gmo_ingredients.js"></script>
 <script src="data/daily_quotes.js"></script>
 <script src="data/safety_db.js"></script>
 <script src="market.js"></script>
