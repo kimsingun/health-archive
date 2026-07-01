@@ -1300,6 +1300,8 @@ td.name{font-weight:600;}
 .badge-2{background:#fff3e0;color:#e65100;}
 .badge-3{background:#e3f2fd;color:#1565c0;}
 mark{background:#ffe082;border-radius:2px;padding:0 1px;}
+.badge-ingr{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:#fdecea;color:#c62828;}
+.badge-raw{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:#fff3e0;color:#e65100;}
 .foodraw-pagination{display:flex;gap:4px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
 .foodraw-pagination button{min-width:32px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-size:12px;cursor:pointer;}
 .foodraw-pagination button.active{background:var(--green);color:#fff;border-color:var(--green);}

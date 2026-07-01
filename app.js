@@ -1649,6 +1649,49 @@ function setupEventsTabs() {
   });
 }
 
+// ---------- 해외직구 차단 원료·성분 ----------
+function setupBlocked() {
+  if (typeof BLOCKED_INGREDIENTS_DATA === 'undefined') return;
+  const data = BLOCKED_INGREDIENTS_DATA;
+  const totalEl = document.getElementById('blocked-total');
+  const countEl = document.getElementById('blocked-count');
+  const tbody   = document.getElementById('blocked-tbody');
+  const searchEl= document.getElementById('blocked-search');
+  const chkIngr = document.getElementById('blocked-filter-ingredient');
+  const chkRaw  = document.getElementById('blocked-filter-raw');
+  if (!tbody) return;
+
+  if (totalEl) totalEl.textContent = data.length;
+
+  function render() {
+    const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
+    const showIngr = chkIngr ? chkIngr.checked : true;
+    const showRaw  = chkRaw  ? chkRaw.checked  : true;
+
+    const filtered = data.filter(r => {
+      if (r.t === '성분' && !showIngr) return false;
+      if (r.t === '원료' && !showRaw)  return false;
+      if (!q) return true;
+      return (r.nk + r.ne + r.alias).toLowerCase().includes(q);
+    });
+
+    if (countEl) countEl.textContent = `${filtered.length}건`;
+    tbody.innerHTML = filtered.map(r => `
+      <tr>
+        <td><span class="badge-${r.t === '성분' ? 'ingr' : 'raw'}">${escapeHtml(r.t)}</span></td>
+        <td><b>${escapeHtml(r.nk)}</b></td>
+        <td style="color:var(--muted)">${escapeHtml(r.ne)}</td>
+        <td style="color:var(--muted);font-size:12px">${escapeHtml(r.alias)}</td>
+        <td style="white-space:nowrap">${escapeHtml(r.date)}</td>
+      </tr>`).join('');
+  }
+
+  if (searchEl) searchEl.addEventListener('input', render);
+  if (chkIngr)  chkIngr.addEventListener('change', render);
+  if (chkRaw)   chkRaw.addEventListener('change', render);
+  render();
+}
+
 // ---------- 식품원료목록 ----------
 function setupFoodRaw() {
   if (typeof FOOD_INGREDIENTS === 'undefined') return;
@@ -1742,6 +1785,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupProducts();
   setupTrials();
   setupFoodRaw();
+  setupBlocked();
   renderHeroNews();
   renderDailyQuote();
   setupVisitorCounter();

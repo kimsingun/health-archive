@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=20260701-board1">
+<link rel="stylesheet" href="style.css?v=20260701-blocked1">
 </head>
 <body>
 <header class="site-header">
@@ -21,6 +21,7 @@
           <a href="#ingredients" data-tab="ingredients" class="nav-link">개별인정/고시형 원료</a>
           <a href="#compare" data-tab="compare" class="nav-link">기능성별 비교</a>
           <a href="#foodraw" data-tab="foodraw" class="nav-link">식품원료목록</a>
+          <a href="#blocked" data-tab="blocked" class="nav-link">해외직구 차단 원료·성분</a>
           <a href="#safety-db" data-tab="safety-db" class="nav-link">안전성 데이터베이스</a>
         </div>
       </div>
@@ -116,6 +117,7 @@
             <a class="nav-card" data-goto="ingredients"><span class="nav-card-icon">원료</span><span class="nav-card-title">개별·고시형 원료</span><span class="nav-card-desc">인정 현황·전환 이력</span></a>
             <a class="nav-card" data-goto="compare"><span class="nav-card-icon">비교</span><span class="nav-card-title">기능성별 비교</span><span class="nav-card-desc">카테고리별 정렬 보기</span></a>
             <a class="nav-card" data-goto="foodraw"><span class="nav-card-icon">목록</span><span class="nav-card-title">식품원료목록</span><span class="nav-card-desc">별표 원료 검색</span></a>
+            <a class="nav-card" data-goto="blocked"><span class="nav-card-icon">차단</span><span class="nav-card-title">해외직구 차단 원료</span><span class="nav-card-desc">반입차단 원료·성분 목록</span></a>
             <a class="nav-card" data-goto="safety-db"><span class="nav-card-icon">안전</span><span class="nav-card-title">안전성 데이터베이스</span><span class="nav-card-desc">내장 9종·외부 49종</span></a>
           </div>
         </div>
@@ -591,6 +593,37 @@
     <div id="foodraw-pagination" class="foodraw-pagination"></div>
   </section>
 
+  <section id="blocked" class="tab-section">
+    <h2>해외직구식품 국내 반입차단 원료·성분</h2>
+    <p class="compare-intro">식약처가 지정한 해외직구 식품 반입차단 목록입니다. 수입식품안전관리 특별법 제25조의3에 따라 국내 반입이 금지된 원료·성분 <b id="blocked-total"></b>건입니다.</p>
+
+    <div class="toolbar">
+      <input type="text" id="blocked-search" placeholder="한글명, 영문명, 기타명칭 검색...">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);">
+        <input type="checkbox" id="blocked-filter-ingredient" checked> 성분
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);">
+        <input type="checkbox" id="blocked-filter-raw" checked> 원료
+      </label>
+      <span class="result-count" id="blocked-count"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="blocked-table">
+        <thead>
+          <tr>
+            <th>분류</th>
+            <th>원료·성분명 (한국)</th>
+            <th>원료·성분명 (영문)</th>
+            <th>기타명칭</th>
+            <th>차단등록일</th>
+          </tr>
+        </thead>
+        <tbody id="blocked-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <section id="events" class="tab-section">
     <h2>학회 / 박람회 일정</h2>
     <p class="compare-intro">건강기능식품·기능성 원료 관련 국내외 주요 박람회 및 학술대회 일정입니다. 일정은 변동될 수 있으니 공식 사이트에서 최종 확인하세요.</p>
@@ -945,6 +978,7 @@
 <script src="data/news_thinkfood.js?v=20260630-news0930"></script>
 <script src="data/status.js?v=20260630-news0930"></script>
 <script src="data/food_ingredients.js"></script>
+<script src="data/blocked_ingredients.js"></script>
 <script src="data/daily_quotes.js"></script>
 <script src="data/safety_db.js"></script>
 <script src="market.js"></script>
