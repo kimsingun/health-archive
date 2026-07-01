@@ -1652,60 +1652,55 @@ function setupEventsTabs() {
 // ---------- 유전자재조합식품 회의록 ----------
 function setupGmoMinutes() {
   if (typeof GMO_MINUTES_DATA === 'undefined') return;
-  const data = GMO_MINUTES_DATA;
+
+  // 결과 타입 + PDF(R2) 있는 항목만
+  const results = GMO_MINUTES_DATA.filter(m => m.kind === '결과' && (m.r2Url || (m.pdfUrls && m.pdfUrls.length)));
+
+  // meetingNo → 심사 원료 목록 매핑
+  const ingrMap = {};
+  if (typeof GMO_INGREDIENTS_DATA !== 'undefined') {
+    GMO_INGREDIENTS_DATA.forEach(r => {
+      const key = r.meetingNo;
+      if (!ingrMap[key]) ingrMap[key] = [];
+      const cleanName = r.name.replace(/유전자(?:변형|재조합)\s*/g, '').trim();
+      if (cleanName) ingrMap[key].push(cleanName);
+    });
+  }
+
   const totalEl = document.getElementById('gmo-min-total');
   const countEl = document.getElementById('gmo-min-count');
   const tbody   = document.getElementById('gmo-min-tbody');
-  const sidebar = document.getElementById('gmo-min-year-sidebar');
   const searchEl= document.getElementById('gmo-min-search');
   if (!tbody) return;
-  if (totalEl) totalEl.textContent = data.length;
 
-  // 연도 목록 생성
-  const years = [...new Set(data.map(m => (m.date||'').slice(0,4)).filter(Boolean))].sort((a,b)=>b-a);
-  if (sidebar) {
-    sidebar.innerHTML = ['전체', ...years].map((y,i) =>
-      `<button class="year-btn${i===0?' active':''}" data-year="${y}">${y}</button>`
-    ).join('');
-    sidebar.querySelectorAll('.year-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        sidebar.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-      });
-    });
-  }
+  let activeYear = 'all';
 
-  function activeYear() {
-    const b = sidebar ? sidebar.querySelector('.year-btn.active') : null;
-    return b ? b.dataset.year : '전체';
-  }
+  buildYearSidebar('gmo-min-year-sidebar', results, m => parseInt((m.date||'').slice(0,4)||0), 'all', y => {
+    activeYear = y;
+    render();
+  });
 
   function render() {
     const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
-    const yr = activeYear();
-    // 결과 타입만, PDF 있는 것만
-    const list = data.filter(m => {
-      if (m.kind !== '결과') return false;
-      if (!m.pdfUrls || !m.pdfUrls.length) return false;
-      if (yr !== '전체' && !(m.date||'').startsWith(yr)) return false;
+    const list = results.filter(m => {
+      const yr = parseInt((m.date||'').slice(0,4)||0);
+      if (activeYear !== 'all' && yr !== activeYear) return false;
       if (!q) return true;
-      return (String(m.meetingNo) + m.title + m.date).toLowerCase().includes(q);
+      const ingrs = (ingrMap[m.meetingNo] || []).join(' ');
+      return (String(m.meetingNo) + m.title + m.date + ingrs).toLowerCase().includes(q);
     });
-    if (totalEl) totalEl.textContent = list.length;
+    if (totalEl) totalEl.textContent = results.length;
     if (countEl) countEl.textContent = `${list.length}건`;
     tbody.innerHTML = list.map(m => {
-      // PDF URL만 (file_seq=1), HWP 제외
-      const pdfUrl = (m.pdfUrls||[]).find(u => u.includes('file_seq=1')) || m.pdfUrls[0];
-      const r2Url = m.r2Url; // R2에 업로드된 경우 사용
-      const linkUrl = r2Url || pdfUrl;
+      const linkUrl = m.r2Url || (m.pdfUrls && m.pdfUrls[0]);
       const pdfLink = linkUrl
         ? `<a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener" class="report-link">회의록 보기</a>`
         : '-';
+      const tags = (ingrMap[m.meetingNo] || []).map(i => `<span class="ing-tag">${escapeHtml(i)}</span>`).join('');
       return `<tr>
-        <td>${escapeHtml((m.date||'').slice(0,4))}</td>
-        <td>${escapeHtml(m.title)}</td>
-        <td>${escapeHtml(m.date)}</td>
+        <td class="notice">${escapeHtml((m.date||'').slice(0,4))}</td>
+        <td class="name">${escapeHtml(m.title)}</td>
+        <td class="ing-cell">${tags || '-'}</td>
         <td>${pdfLink}</td>
       </tr>`;
     }).join('');
@@ -1718,37 +1713,49 @@ function setupGmoMinutes() {
 // ---------- 유전자재조합식품 심사 원료 ----------
 function setupGmoIngredients() {
   if (typeof GMO_INGREDIENTS_DATA === 'undefined') return;
-  const data = GMO_INGREDIENTS_DATA;
+
+  // meetingNo → r2Url 매핑
+  const pdfMap = {};
+  if (typeof GMO_MINUTES_DATA !== 'undefined') {
+    GMO_MINUTES_DATA.filter(m => m.kind === '결과').forEach(m => {
+      if (m.r2Url) pdfMap[m.meetingNo] = m.r2Url;
+      else if (m.pdfUrls && m.pdfUrls.length) pdfMap[m.meetingNo] = m.pdfUrls[0];
+    });
+  }
+
+  // 회차별로 그룹핑 (meetingNo 기준, 내림차순)
+  const grouped = new Map();
+  GMO_INGREDIENTS_DATA.forEach(r => {
+    const key = r.meetingNo;
+    if (!grouped.has(key)) grouped.set(key, { meetingNo: key, date: r.date, names: [] });
+    const cleanName = r.name.replace(/유전자(?:변형|재조합)\s*/g, '').trim();
+    if (cleanName) grouped.get(key).names.push(cleanName);
+  });
+  const groups = Array.from(grouped.values()).sort((a, b) => b.meetingNo - a.meetingNo);
+
   const totalEl = document.getElementById('gmo-ingr-total');
   const countEl = document.getElementById('gmo-ingr-count');
   const tbody   = document.getElementById('gmo-ingr-tbody');
   const searchEl= document.getElementById('gmo-ingr-search');
   if (!tbody) return;
-  if (totalEl) totalEl.textContent = data.length;
-
-  // meetingNo → seq 매핑 (PDF 링크용)
-  const minMap = {};
-  if (typeof GMO_MINUTES_DATA !== 'undefined') {
-    GMO_MINUTES_DATA.filter(m => m.kind === '결과' && m.pdfUrls && m.pdfUrls.length).forEach(m => {
-      minMap[m.meetingNo] = m.pdfUrls[0];
-    });
-  }
+  if (totalEl) totalEl.textContent = groups.reduce((s, g) => s + g.names.length, 0);
 
   function render() {
     const q = (searchEl ? searchEl.value : '').trim().toLowerCase();
-    const list = q ? data.filter(r =>
-      (r.name + r.company + String(r.meetingNo) + r.date).toLowerCase().includes(q)
-    ) : data;
-    if (countEl) countEl.textContent = `${list.length}건`;
-    tbody.innerHTML = list.map(r => {
-      const pdfUrl = minMap[r.meetingNo];
+    const list = q
+      ? groups.filter(g => (String(g.meetingNo) + g.date + g.names.join(' ')).toLowerCase().includes(q))
+      : groups;
+    if (countEl) countEl.textContent = `${list.reduce((s, g) => s + g.names.length, 0)}건 (${list.length}회차)`;
+    tbody.innerHTML = list.map(g => {
+      const tags = g.names.map(n => `<span class="ing-tag">${escapeHtml(n)}</span>`).join('');
+      const pdfUrl = pdfMap[g.meetingNo];
       const pdfLink = pdfUrl
-        ? `<a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener" class="pdf-link">PDF</a>`
+        ? `<a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener" class="report-link">회의록 보기</a>`
         : '-';
       return `<tr>
-        <td>제${escapeHtml(String(r.meetingNo))}차</td>
-        <td>${escapeHtml(r.date)}</td>
-        <td>${escapeHtml(r.name)}</td>
+        <td class="notice">제${g.meetingNo}차</td>
+        <td>${escapeHtml(g.date)}</td>
+        <td class="ing-cell">${tags || '-'}</td>
         <td>${pdfLink}</td>
       </tr>`;
     }).join('');
