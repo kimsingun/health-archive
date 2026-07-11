@@ -1,0 +1,33 @@
+{
+  "name": "HealthArchive - 건강기능식품 개발자 아카이브",
+  "short_name": "HealthArchive",
+  "description": "건강기능식품 원료 개발, 데이터베이스, 안전성, 법령, 연구·시장 자료를 정리한 정보 아카이브입니다.",
+  "lang": "ko",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f8f4",
+  "theme_color": "#2f6d57",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
