@@ -13,3 +13,6 @@ minutes-pdfs/*.pdf
 reports/
 paper-reports/
 paper-source-pdfs/
+
+# Instagram 로그인 세션
+tools/instagram/ig_session.json
